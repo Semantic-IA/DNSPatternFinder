@@ -17,8 +17,11 @@ try {
 	
 	    page.onResourceReceived = function (res) {
 	        var data = JSON.stringify(res.url, undefined, 4).split("/")[2];
-		if (~data.indexOf(".")) {
-		    set[data] = true;
+		if (~data.indexOf(".")) {  // Check if String contains "." (if not, it is a false positive)
+		    if (data.substring(0,4) == "www.") { // Remove www., if it is there
+			data = data.substring(4);
+		    }
+		    set[data] = true; // Save data
 		}
 	    };
 	    page.onError = function(err) {
