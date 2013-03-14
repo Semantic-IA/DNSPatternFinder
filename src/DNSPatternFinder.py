@@ -8,7 +8,7 @@ import IO.CSVParser
 import Worker.WorkerThread
 import Worker.StatWorker
 
-csv_path = "/home/Max/Downloads/top-1m-ns-nc-2.csv"
+csv_path = "/home/Max/Downloads/top-1m-ns-nc.csv"
 outfile = "/home/Max/outfile.txt"
 pjs_path = "/home/Max/Downloads/phantomjs-1.8.2-linux-x86_64/bin/phantomjs"
 ndjs_path = "/home/Max/Downloads/phantomjs-1.8.2-linux-x86_64/netdomains.js"
