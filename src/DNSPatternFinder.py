@@ -7,7 +7,12 @@ import IO.OutputWriter
 import IO.CSVParser
 import Worker.WorkerThread
 import Worker.StatWorker
+import sys # For SIGINT Handling
+import signal # For SIGINT Handling
 
+def clean_shutdown(signal, frame):
+    [x.shutdown() for x in threads]
+    
 csv_path = "/home/Max/Downloads/top-1m-ns-nc.csv"
 outfile = "/home/Max/outfile.txt"
 pjs_path = "/home/Max/Downloads/phantomjs-1.8.2-linux-x86_64/bin/phantomjs"
@@ -27,10 +32,10 @@ for i in range(THREADCOUNT):
     t = Worker.WorkerThread.Thread(pjs_path, ndjs_path, parser, writer, errw, stat)
     threads.append(t)
 [x.start() for x in threads]
-try:
-    [x.join() for x in threads]
-except KeyboardInterrupt:
-    [x.shutdown() for x in threads]
+signal.signal(signal.SIGINT, clean_shutdown)
+signal.signal(signal.SIGTERM, clean_shutdown)
+[x.join() for x in threads]
+
 print "|"
 print "All Threads done, shutting down"
 writer.shutdown()

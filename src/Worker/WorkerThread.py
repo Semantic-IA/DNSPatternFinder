@@ -26,7 +26,7 @@ class Thread(threading.Thread):
                         self.OUTWRITER.writeOut(self.url, self.output[0].strip())
                         if len(self.output[1]) != 0:
                             self.ERRWRITER.writeOut(self.url, self.output[1].strip())
-                            self.STAT.done()
+                        self.STAT.done()
                     except Exception as inst:
                         print type(inst)
                         print inst
@@ -41,5 +41,3 @@ class Thread(threading.Thread):
     
     def shutdown(self):
         self.RUN = False
-        
-        

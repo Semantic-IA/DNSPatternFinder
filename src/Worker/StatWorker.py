@@ -8,8 +8,8 @@ from sys import stdout
 class Progress():
     def __init__(self, LC):
         self.lock = Lock()
-        self.lp = 0
-        self.cp = 0
+        self.lpips = 0
+        self.cpips = 0
         self.cc = 0
         self.ONEP = float(LC / 100.0)
         self.COLS = 50
@@ -21,11 +21,11 @@ class Progress():
     def done(self):
         with self.lock:
             self.cc +=1
-            self.cp = floor(float(self.cc / self.ONEP))
-            while (self.cp - self.lp >= self.STEP):
+            self.cpips = floor(float(self.cc / self.ONEP / self.STEP))
+            while (self.cpips > self.lpips):
                 stdout.write("=")
                 stdout.flush()
-                self.lp += self.STEP
-            self.lp = self.cp
+                self.lpips += self.STEP
+            self.lpips = self.cpips
             
         
