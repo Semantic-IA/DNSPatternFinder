@@ -11,7 +11,8 @@ import Worker.StatWorker
 csv_path = "/home/Max/Downloads/top-1m-ns-nc.csv"
 outfile = "/home/Max/outfile.txt"
 pjs_path = "/home/Max/Downloads/phantomjs-1.8.2-linux-x86_64/bin/phantomjs"
-ndjs_path = "/home/Max/Downloads/phantomjs-1.8.2-linux-x86_64/netdomains.js"
+ndjs_path = "script/netdomains.js"
+errfile = "/home/Max/errfile.txt"
 THREADCOUNT = 10
 
 with open(csv_path, 'r') as fobj:
@@ -19,10 +20,11 @@ with open(csv_path, 'r') as fobj:
 parserc = IO.CSVParser.Parser(csv_path)
 parser = parserc.getJob()
 writer = IO.OutputWriter.writer(outfile)
+errw = IO.OutputWriter.writer(errfile)
 stat = Worker.StatWorker.Progress(LC)
 threads = []
 for i in range(THREADCOUNT):
-    t = Worker.WorkerThread.Thread(pjs_path, ndjs_path, parser, writer, stat)
+    t = Worker.WorkerThread.Thread(pjs_path, ndjs_path, parser, writer, errw, stat)
     threads.append(t)
 [x.start() for x in threads]
 [x.join() for x in threads]
