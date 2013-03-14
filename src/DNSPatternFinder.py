@@ -27,7 +27,10 @@ for i in range(THREADCOUNT):
     t = Worker.WorkerThread.Thread(pjs_path, ndjs_path, parser, writer, errw, stat)
     threads.append(t)
 [x.start() for x in threads]
-[x.join() for x in threads]
+try:
+    [x.join() for x in threads]
+except KeyboardInterrupt:
+    [x.shutdown() for x in threads]
 print "|"
 print "All Threads done, shutting down"
 writer.shutdown()

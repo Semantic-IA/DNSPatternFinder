@@ -15,24 +15,31 @@ class Thread(threading.Thread):
         self.OUTWRITER = ow
         self.ERRWRITER = ew
         self.STAT = stat
+        self.RUN = True
         
     def run(self):
         try:
             for self.url in self.GENERATOR:
-                try:
-                    self.output = self.runExternal(self.url)
-                    self.OUTWRITER.writeOut(self.url, self.output[0].strip())
-                    if len(self.output[1]) != 0:
-                        self.ERRWRITER.writeOut(self.url, self.output[1].strip())
-                    self.STAT.done()
-                except Exception as inst:
-                    print type(inst)
-                    print inst
-        except: 
+                if self.RUN:
+                    try:
+                        self.output = self.runExternal(self.url)
+                        self.OUTWRITER.writeOut(self.url, self.output[0].strip())
+                        if len(self.output[1]) != 0:
+                            self.ERRWRITER.writeOut(self.url, self.output[1].strip())
+                            self.STAT.done()
+                    except Exception as inst:
+                        print type(inst)
+                        print inst
+                else:
+                    return
+        except:
             return
     
     def runExternal(self,url):
         self.process = Popen([self.PHANTOMJS_PATH, self.NETDOMAINS_PATH, "http://" + url], stdout=PIPE, stderr=PIPE)
         return self.process.communicate()
+    
+    def shutdown(self):
+        self.RUN = False
         
         
