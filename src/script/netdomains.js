@@ -16,7 +16,10 @@ try {
 	    address = system.args[1];
 	
 	    page.onResourceReceived = function (res) {
-	        set[JSON.stringify(res.url, undefined, 4).split("/")[2]] = true;
+	        var data = JSON.stringify(res.url, undefined, 4).split("/")[2];
+		if (~data.indexOf(".")) {
+		    set[data] = true;
+		}
 	    };
 	    page.onError = function(err) {
 	    };
