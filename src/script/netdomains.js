@@ -26,6 +26,8 @@ try {
 	    };
 	    page.onError = function(err) {
 	    };
+	    phantom.onError = function(err) {
+	    };
 	
 	    page.open(address, function (status) {
 	        if (status !== 'success') {
