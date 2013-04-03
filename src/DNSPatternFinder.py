@@ -14,7 +14,7 @@ import signal # For SIGINT Handling
 
 def clean_shutdown(signal, frame):
     [x.shutdown() for x in threads]
-    
+# TODO: Parameterize these Variables    
 csv_path = "/home/Max/Downloads/top-1m-ns-nc.csv"
 outfile = "/home/Max/outfile.txt"
 pjs_path = "/home/Max/Downloads/phantomjs-1.8.2-linux-x86_64/bin/phantomjs"
