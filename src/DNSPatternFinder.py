@@ -2,6 +2,8 @@
 Main executable. Controls Workers and IO
 
 @author: Max Maass
+@version: 0.1
+@date: 03. Apr. 2013
 '''
 import IO.OutputWriter
 import IO.CSVParser
@@ -13,7 +15,6 @@ import signal # For SIGINT Handling
 def clean_shutdown(signal, frame):
     [x.shutdown() for x in threads]
     
-# @TODO: Parameterize dis shit
 csv_path = "/home/Max/Downloads/top-1m-ns-nc.csv"
 outfile = "/home/Max/outfile.txt"
 pjs_path = "/home/Max/Downloads/phantomjs-1.8.2-linux-x86_64/bin/phantomjs"
