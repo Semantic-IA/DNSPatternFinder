@@ -71,7 +71,7 @@ USAGE
         parser.add_argument(dest="infile", help="File containing the target Domains, one per line, without the leading 'http://www.'", metavar="input")
         parser.add_argument(dest="outfile", help="Output file", metavar="output")
         parser.add_argument('-c', '--threads', dest="threadc", help="Sets the number of Processes to be used to N [default %(default)s]", metavar="N", default="10", type=int)
-        parser.add_argument('-f', '--script', dest="script", help="Set the used phantomJS-script to sc [default %(default)s]", default="script/netdomain.js", metavar="sc")
+        parser.add_argument('-f', '--script', dest="script", help="Set the used phantomJS-script to sc [default %(default)s]", default="script/netdomains.js", metavar="sc")
         parser.add_argument('-b', '--binary', dest="pjs_bin", help="Set the used phantomJS-binary to bin [default %(default)s]", default="phantomjs", metavar="bin")
         
         # Process arguments
@@ -82,8 +82,21 @@ USAGE
         WORKERS = args.threadc      # Thread count
         SCRIPTFILE = args.script    # Script to use with PhantomJS
         BINARY = args.pjs_bin       # PhantomJS binary
-        # TODO: Check if files exist
         
+        for f in [INFILE, SCRIPTFILE, BINARY]:
+            try:
+                with open(f): pass
+            except IOError:
+                if f != "phantomjs":
+                    sys.stderr.write("Error: File " + f + " does not exist. EXITING.\n")
+                else:
+                    sys.stderr.write("Error: phantomjs not found. Please make sure it is installed and inside the system PATH. Alternatively, specify the path to the binary using the '-b'-Switch. EXITING.\n")
+                return 1
+        if WORKERS < 1:
+            sys.stderr.write("Error: Thread count must be at least 1. EXITING.")
+            return 1
+        
+        # TODO: Start the collection process
         return 0
     except KeyboardInterrupt:
         ### handle keyboard interrupt ###
