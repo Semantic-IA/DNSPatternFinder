@@ -25,9 +25,9 @@ import Worker.WorkerThread
 import signal
 
 __all__ = []
-__version__ = 0.1
+__version__ = 0.2
 __date__ = '2013-03-13'
-__updated__ = '2013-04-06'
+__updated__ = '2013-05-06'
 
 DEBUG = 0
 TESTRUN = 0
