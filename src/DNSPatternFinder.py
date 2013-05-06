@@ -1,4 +1,4 @@
-#!/usr/local/bin/python2.7
+#!/usr/bin/python2.7
 # encoding: utf-8
 '''
 DNSPatternFinder -- Automatically capture DNS Query Patterns
@@ -9,7 +9,7 @@ DNSPatternFinder -- Automatically capture DNS Query Patterns
         
 @license:    To be determined
 
-@contact:    0maass@informatik.uni-hamburg.de (PGP Key ID: 6F3891FC, Fingerprint 146D 278F F603 D22F 8906  373C 3C58 CF40 6F38 91FC)
+@contact:    0maass@informatik.uni-hamburg.de (PGP Key ID: 3408825E, Fingerprint 84C4 8097 A3AF 7D55 189A  77AC 169F 9624 3408 825E)
 @deffield    updated: Updated
 '''
 
@@ -18,6 +18,11 @@ import os
 
 from argparse import ArgumentParser
 from argparse import RawDescriptionHelpFormatter
+import IO.CSVParser
+import IO.OutputWriter
+import Worker.StatWorker
+import Worker.WorkerThread
+import signal
 
 __all__ = []
 __version__ = 0.1
@@ -37,7 +42,6 @@ class CLIError(Exception):
         return self.msg
     def __unicode__(self):
         return self.msg
-
 def main(argv=None): # IGNORE:C0111
     '''Command line options.'''
     
@@ -82,7 +86,6 @@ USAGE
         WORKERS = args.threadc      # Thread count
         SCRIPTFILE = args.script    # Script to use with PhantomJS
         BINARY = args.pjs_bin       # PhantomJS binary
-        
         for f in [INFILE, SCRIPTFILE, BINARY]:
             try:
                 with open(f): pass
@@ -95,8 +98,25 @@ USAGE
         if WORKERS < 1:
             sys.stderr.write("Error: Thread count must be at least 1. EXITING.")
             return 1
-        
-        # TODO: Start the collection process
+        with open(INFILE, 'r') as fobj:
+            LC = sum(1 for line in fobj)
+        threads = []
+        def clean_shutdown(signal, frame):
+            [x.shutdown() for x in threads]
+        parser = IO.CSVParser.Parser(INFILE).getJob()
+        writer = IO.OutputWriter.writer(OUTFILE)
+        stat = Worker.StatWorker.Progress(LC)
+        for i in range(WORKERS):
+            t = Worker.WorkerThread.Thread(BINARY, SCRIPTFILE, parser, writer, stat)
+            threads.append(t)
+        [x.start() for x in threads]
+        signal.signal(signal.SIGINT, clean_shutdown)
+        signal.signal(signal.SIGTERM, clean_shutdown)
+        [x.join() for x in threads]
+        print "|"
+        print "All Threads done, shutting down"
+        writer.shutdown()
+
         return 0
     except KeyboardInterrupt:
         ### handle keyboard interrupt ###
