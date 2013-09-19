@@ -5,6 +5,7 @@ Shows a progress bar
 from threading import Lock
 from math import floor
 from sys import stdout
+# TODO: Port stat class from DRQPatternAttack to this project, as it works and looks better.
 class Progress():
     def __init__(self, LC):
         self.lock = Lock()
