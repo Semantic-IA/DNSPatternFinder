@@ -5,7 +5,9 @@ Shows a progress bar
 from threading import Lock
 from math import floor
 from sys import stdout
+
 class Progress():
+    """Progress bar implementation. A bit buggy, but does the job"""
     def __init__(self, LC):
         self.lock = Lock()
         self.lpips = 0
@@ -27,5 +29,3 @@ class Progress():
                 stdout.flush()
                 self.lpips += self.STEP
             self.lpips = self.cpips
-            
-        

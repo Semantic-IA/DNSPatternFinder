@@ -7,9 +7,9 @@ DNSPatternFinder -- Automatically capture DNS Query Patterns
         
 @copyright:  2013 Max Maass
         
-@license:    To be determined
+@license:    BSD 2-clause License
 
-@contact:    0maass@informatik.uni-hamburg.de (PGP Key ID: 3408825E, Fingerprint 84C4 8097 A3AF 7D55 189A  77AC 169F 9624 3408 825E)
+@contact:    max [aett] velcommuta.de (PGP Key ID: 3408825E, Fingerprint 84C4 8097 A3AF 7D55 189A  77AC 169F 9624 3408 825E)
 @deffield    updated: Updated
 '''
 
@@ -25,9 +25,9 @@ import Worker.WorkerThread
 import signal
 
 __all__ = []
-__version__ = 0.2
+__version__ = 0.3
 __date__ = '2013-03-13'
-__updated__ = '2013-05-06'
+__updated__ = '2013-10-06'
 
 DEBUG = 0
 TESTRUN = 0
@@ -60,7 +60,7 @@ def main(argv=None): # IGNORE:C0111
   Created by Max Maass on %s.
   Copyright 2013 Max Maass.
   
-  Licensed under the TBD License.
+  Licensed under the BSD License.
   
   Distributed on an "AS IS" basis without warranties
   or conditions of any kind, either express or implied.
@@ -86,9 +86,9 @@ USAGE
         WORKERS = args.threadc      # Thread count
         SCRIPTFILE = args.script    # Script to use with PhantomJS
         BINARY = args.pjs_bin       # PhantomJS binary
-        for f in [INFILE, SCRIPTFILE, BINARY]:
+        for f in [INFILE, SCRIPTFILE, BINARY]: # Check if all files actually exist.
             try:
-                with open(f): pass
+                with open(f, "r"): pass
             except IOError:
                 if f != "phantomjs":
                     sys.stderr.write("Error: File " + f + " does not exist. EXITING.\n")
@@ -98,21 +98,23 @@ USAGE
         if WORKERS < 1:
             sys.stderr.write("Error: Thread count must be at least 1. EXITING.")
             return 1
-        with open(INFILE, 'r') as fobj:
+        with open(INFILE, 'r') as fobj: # Count lines
             LC = sum(1 for line in fobj)
         threads = []
-        def clean_shutdown(signal, frame):
+
+        def clean_shutdown(signal, frame): # Shutdown all threads
             [x.shutdown() for x in threads]
-        parser = IO.CSVParser.Parser(INFILE).getJob()
-        writer = IO.OutputWriter.writer(OUTFILE)
-        stat = Worker.StatWorker.Progress(LC)
-        for i in range(WORKERS):
+        
+        parser = IO.CSVParser.Parser(INFILE).jobGenerator() # Get an iterator object yielding targets for phantomJS
+        writer = IO.OutputWriter.writer(OUTFILE) # Writer for output file
+        stat = Worker.StatWorker.Progress(LC) # Progress bar
+        for i in range(WORKERS): # Create workers
             t = Worker.WorkerThread.Thread(BINARY, SCRIPTFILE, parser, writer, stat)
             threads.append(t)
-        [x.start() for x in threads]
-        signal.signal(signal.SIGINT, clean_shutdown)
+        [x.start() for x in threads] # Run Threads
+        signal.signal(signal.SIGINT, clean_shutdown) # Handle SIGINT and SIGTERM with a clean shutdown
         signal.signal(signal.SIGTERM, clean_shutdown)
-        [x.join() for x in threads]
+        [x.join() for x in threads] # Wait for all threads to finish
         print "|"
         print "All Threads done, shutting down"
         writer.shutdown()
