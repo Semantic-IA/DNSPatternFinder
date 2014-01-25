@@ -3,7 +3,7 @@ DNSPatternFinder.py
 
 A basic implementation that finds the DNS Patterns created when viewing a
 Website. Meant to be used to generate the Database for the
-[Simulator for semantic intersection attacks](https://github.com/malexmave/DRQPatternAttack)
+[Simulator for semantic intersection attacks](https://github.com/Semantic-IA/DRQPatternAttack)
 on the DNS Range Query algorithm proposed by Zhao et al.
 
 # Dependencies
